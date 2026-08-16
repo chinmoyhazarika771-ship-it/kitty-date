@@ -7,8 +7,8 @@ const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
 const dmSerif = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-dm-serif' })
 
 export const metadata: Metadata = {
-  title: 'For the Record — A Very Important Question',
-  description: 'A small, thoughtful invitation to a very good date.',
+  title: 'Kitty Channel — A Happy Little Space',
+  description: 'A soft, sparkly community space for cute finds, cozy thoughts, and happy conversations.',
   generator: 'v0.app',
 }
 
