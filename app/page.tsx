@@ -1,105 +1,56 @@
 'use client'
 
-import { FormEvent, useState } from 'react'
-import {
-  Bell,
-  ChevronDown,
-  Hash,
-  Heart,
-  ImagePlus,
-  Menu,
-  Mic,
-  MoreHorizontal,
-  Paperclip,
-  Send,
-  Settings,
-  Sparkles,
-  Star,
-  X,
-} from 'lucide-react'
+import { useState } from 'react'
+import { CalendarDays, Clock3, Heart, Sparkles, Star } from 'lucide-react'
 
-const channels = [
-  { name: 'general', unread: 3 },
-  { name: 'cute-finds', unread: 0 },
-  { name: 'outfits', unread: 0 },
-  { name: 'cozy-corner', unread: 0 },
+const vibes = [
+  { label: 'Pizza', emoji: '🍕' },
+  { label: 'Sushi', emoji: '🍣' },
+  { label: 'Burgers', emoji: '🍔' },
+  { label: 'Pasta', emoji: '🍝' },
+  { label: 'Tacos', emoji: '🌮' },
+  { label: 'Ramen', emoji: '🍜' },
 ]
 
-const initialMessages = [
-  { id: 1, author: 'Mimi', time: '9:41 AM', avatar: 'M', tone: 'rose', text: 'Good morning, cuties! What is everyone up to today?' },
-  { id: 2, author: 'Kiki', time: '9:44 AM', avatar: 'K', tone: 'peach', text: 'I found the sweetest little strawberry tote. It has tiny bows on it.' },
-  { id: 3, author: 'You', time: '9:48 AM', avatar: 'Y', tone: 'red', text: 'That sounds adorable. Please share a photo!' },
-  { id: 4, author: 'Mimi', time: '9:52 AM', avatar: 'M', tone: 'rose', text: 'I am planning a cozy movie night later. Anyone want to join?' },
-]
+const times = Array.from({ length: 19 }, (_, index) => {
+  const totalMinutes = 12 * 60 + index * 30
+  const hour = Math.floor(totalMinutes / 60)
+  const minute = totalMinutes % 60
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const displayHour = hour > 12 ? hour - 12 : hour
+  return `${displayHour}:${String(minute).padStart(2, '0')} ${suffix}`
+})
+
+function FallingHearts() {
+  return <div className="heart-rain" aria-hidden="true">{Array.from({ length: 18 }, (_, index) => <span key={index} style={{ '--i': index } as React.CSSProperties}>♥</span>)}</div>
+}
 
 export default function Page() {
-  const [activeChannel, setActiveChannel] = useState('general')
-  const [messages, setMessages] = useState(initialMessages)
-  const [draft, setDraft] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [step, setStep] = useState(1)
+  const [noPosition, setNoPosition] = useState({ x: 0, y: 0 })
+  const [date, setDate] = useState('')
+  const [time, setTime] = useState('6:00 PM')
+  const [vibe, setVibe] = useState('')
 
-  const sendMessage = (event: FormEvent) => {
-    event.preventDefault()
-    const text = draft.trim()
-    if (!text) return
-    setMessages((current) => [...current, { id: Date.now(), author: 'You', time: 'now', avatar: 'Y', tone: 'red', text }])
-    setDraft('')
-  }
+  const dodgeNo = () => setNoPosition({ x: Math.round((Math.random() * 180) - 90), y: Math.round((Math.random() * 90) - 45) })
 
   return (
-    <main className="kitty-app">
-      <aside className={`kitty-sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
-        <div className="sidebar-glow glow-one" />
-        <div className="sidebar-glow glow-two" />
-        <div className="sidebar-brand">
-          <div className="kitty-bow" aria-hidden="true"><span /><span /></div>
-          <div><p>kitty</p><strong>channel</strong></div>
-          <button className="icon-button mobile-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}><X /></button>
-        </div>
+    <main className="proposal-page">
+      <div className="kitty-side-art" aria-hidden="true"><div className="kitty-head"><span className="ear left" /><span className="ear right" /><span className="eye left" /><span className="eye right" /><span className="nose" /><span className="whisker one" /><span className="whisker two" /><span className="bow" /></div><div className="sparkle sparkle-one">✦</div><div className="sparkle sparkle-two">✧</div></div>
+      <div className="proposal-shell">
+        <div className="progress-dots" aria-label={`Step ${step} of 5`}>{[1, 2, 3, 4, 5].map((item) => <span key={item} className={item <= step ? 'active' : ''} />)}</div>
 
-        <div className="profile-card">
-          <div className="avatar avatar-red">Y</div>
-          <div><strong>your little space</strong><span><i /> online</span></div>
-          <ChevronDown size={16} />
-        </div>
+        {step === 1 && <section className="proposal-card ask-card fade-up"><div className="photo-frame"><img src="/date-dog.png" alt="A fluffy puppy wearing a pink bandana" /></div><p className="eyebrow">a very important question</p><h1>🌸 Will you go on a date with me? 🌸</h1><p className="subcopy">I promise good food, silly conversations, and at least one memorable little adventure.</p><div className="button-row"><button className="primary-button" onClick={() => setStep(2)}>YES 💗</button><button className="no-button" style={{ transform: `translate(${noPosition.x}px, ${noPosition.y}px)` }} onMouseEnter={dodgeNo} onFocus={dodgeNo} onClick={dodgeNo}>NO 💔</button></div></section>}
 
-        <nav className="channel-nav" aria-label="Channels">
-          <div className="nav-label"><span>channels</span><button className="icon-button" aria-label="Add channel">+</button></div>
-          {channels.map((channel) => (
-            <button key={channel.name} className={`channel-link ${activeChannel === channel.name ? 'active' : ''}`} onClick={() => { setActiveChannel(channel.name); setMenuOpen(false) }}>
-              <Hash size={17} /><span>{channel.name}</span>{channel.unread > 0 && <b>{channel.unread}</b>}
-            </button>
-          ))}
-        </nav>
+        {step === 2 && <section className="proposal-card celebration-card fade-up"><div className="confetti" aria-hidden="true">{Array.from({ length: 42 }, (_, index) => <i key={index} style={{ '--i': index } as React.CSSProperties} />)}</div><div className="big-heart">♥</div><p className="eyebrow">oh my gosh</p><h1>WAIT YOU ACTUALLY SAID YES?? 🥹</h1><p className="subcopy">I was so ready for you to say no 😭</p><button className="primary-button" onClick={() => setStep(3)}>yay okay! <span>→</span></button></section>}
 
-        <div className="sidebar-bottom">
-          <div className="tiny-note"><Sparkles size={14} /> keep it cute</div>
-          <button className="settings-link"><Settings size={17} /> settings</button>
-        </div>
-      </aside>
+        {step === 3 && <section className="proposal-card date-card fade-up"><div className="icon-badge"><CalendarDays /></div><p className="eyebrow">step three of five</p><h1>🗓️ So... when are you free?</h1><p className="subcopy">Pick a day and time. I’ll make the rest feel easy.</p><div className="field-grid"><label>Date<input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label><label>Time<select aria-label="Time" value={time} onChange={(event) => setTime(event.target.value)}>{times.map((option) => <option key={option}>{option}</option>)}</select></label></div><button className="primary-button" disabled={!date} onClick={() => setStep(4)}>set the date! 💌</button></section>}
 
-      <section className="channel-area">
-        <header className="channel-header">
-          <button className="icon-button mobile-menu" aria-label="Open menu" onClick={() => setMenuOpen(true)}><Menu /></button>
-          <div className="channel-title"><span className="bow-mini">⌁</span><div><div><Hash size={18} /> <h1>{activeChannel}</h1></div><p>A happy place for happy thoughts</p></div></div>
-          <div className="header-actions"><button className="icon-button" aria-label="Notifications"><Bell /><i /></button><button className="icon-button" aria-label="More options"><MoreHorizontal /></button></div>
-        </header>
+        {step === 4 && <section className="proposal-card vibe-card fade-up"><div className="icon-badge"><Sparkles /></div><p className="eyebrow">last little choice</p><h1>What are we feeling? ✨</h1><p className="subcopy">Pick your vibe and I’ll start planning the perfect version of us.</p><div className="vibe-grid">{vibes.map((item) => <button key={item.label} className={`vibe-option ${vibe === item.label ? 'selected' : ''}`} onClick={() => setVibe(item.label)}><span>{item.emoji}</span><strong>{item.label}</strong></button>)}</div><button className="primary-button" disabled={!vibe} onClick={() => setStep(5)}>this one! <span>→</span></button></section>}
 
-        <div className="feed">
-          <div className="welcome-card"><div className="welcome-stars"><Star /><Sparkles /><Heart fill="currentColor" /></div><p className="eyebrow">welcome to #{activeChannel}</p><h2>A pocket of happy things.</h2><p>This is the very beginning of the #{activeChannel} channel. Say something sweet!</p></div>
-          <div className="day-divider"><span>today</span></div>
-          {messages.map((message) => (
-            <article className="message-row" key={message.id}>
-              <div className={`avatar avatar-${message.tone}`}>{message.avatar}</div>
-              <div className="message-body"><div className="message-meta"><strong>{message.author}</strong><time>{message.time}</time></div><p>{message.text}</p><div className="reaction"><Heart size={13} /> 2</div></div>
-            </article>
-          ))}
-        </div>
-
-        <form className="composer" onSubmit={sendMessage}>
-          <div className="composer-box"><button type="button" className="composer-action" aria-label="Attach file"><Paperclip /></button><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={`Message #${activeChannel}`} aria-label={`Message ${activeChannel}`} /><button type="button" className="composer-action desktop-action" aria-label="Add image"><ImagePlus /></button><button type="button" className="composer-action desktop-action" aria-label="Record audio"><Mic /></button><button className="send-button" type="submit" aria-label="Send message"><Send /></button></div><p>press <kbd>Enter</kbd> to send <span>•</span> be kind, always</p>
-        </form>
-      </section>
+        {step === 5 && <section className="proposal-card final-card fade-up"><FallingHearts /><div className="final-stars"><Star fill="currentColor" /><Heart fill="currentColor" /><Star fill="currentColor" /></div><p className="eyebrow">it’s a date</p><h1>glad you didn’t say no.</h1><p className="final-copy">be ready by 6, i&apos;m coming to get you 🛻.</p><div className="date-recap"><Clock3 /> {date ? new Date(`${date}T12:00:00`).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) : 'our special day'} · {time}</div><p className="tiny-note">made with all my heart</p></section>}
+      </div>
+      <footer>Made by CH</footer>
     </main>
   )
 }
